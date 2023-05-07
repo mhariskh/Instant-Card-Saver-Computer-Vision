@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:camera/camera.dart';
-
 import 'package:cvcardreader/pages/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -25,11 +24,57 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Card Detection',
+      title: 'Contact Card Saver',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.blue,
       ),
-      home: CameraScreen(),
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Contact Card Saver'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton.icon(
+              icon: Icon(Icons.file_upload),
+              label: Text("Upload Picture"),
+              onPressed: () async {
+                final picker = ImagePicker();
+                final pickedFile =
+                    await picker.pickImage(source: ImageSource.gallery);
+                if (pickedFile != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailScreen(pickedFile.path),
+                    ),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: Icon(Icons.camera),
+              label: Text("Take Picture"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -45,7 +90,6 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
-
     _controller = CameraController(cameras[0], ResolutionPreset.medium);
     _controller.initialize().then((_) {
       if (!mounted) {
@@ -61,6 +105,8 @@ class _CameraScreenState extends State<CameraScreen> {
     super.dispose();
   }
 
+  // Existing code for taking a picture
+  // ...
   Future<String> _takePicture() async {
     if (!_controller.value.isInitialized) {
       print("Controller is not initialized");
@@ -96,7 +142,7 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Card Detection'),
+        title: Text('Take Picture'),
       ),
       body: _controller.value.isInitialized
           ? Stack(

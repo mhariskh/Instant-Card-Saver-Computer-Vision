@@ -31,9 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
   google_ml_kit: ^0.7.2
+
   permission_handler: ^9.0.0
   contacts_service: ^0.6.1
   workmanager: any
+
+  image_picker: ^0.8.5
 
   camera: ^0.9.8
   path_provider: any

@@ -56,7 +56,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
     String mailAddress = "";
     String phoneNumber = "";
-
     String name = "";
     List<String> notes = [];
 
@@ -65,7 +64,11 @@ class _DetailScreenState extends State<DetailScreen> {
         if (regExEmail.hasMatch(line.text)) {
           mailAddress += line.text + '\, ';
         } else if (regExNumber.hasMatch(line.text)) {
-          phoneNumber += line.text + ' ';
+          if (phoneNumber.isEmpty) {
+            phoneNumber = line.text;
+          } else {
+            notes.add("Additional Number: ${line.text}");
+          }
         } else if (regExName.hasMatch(line.text) && name.isEmpty) {
           name = line.text;
         } else {
@@ -126,16 +129,15 @@ class _DetailScreenState extends State<DetailScreen> {
     super.initState();
   }
 
-// Launch intent
+  // Launch intent
   void customLaunch(command) async {
     if (await canLaunch(command)) {
       await launch(command);
     } else {
-      print('could not launch $command');
+      print('Could not launch $command');
     }
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
